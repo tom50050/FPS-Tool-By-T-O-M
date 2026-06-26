@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>T O M - PUBG FPS Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --neon-cyan:#00d4ff;
+  --neon-orange:#ff6b35;
+  --neon-purple:#a855f7;
+  --neon-green:#00ff88;
+  --neon-yellow:#ffcc00;
+  --bg-dark:#020810;
+  --bg-card:rgba(10,20,40,0.85);
+  --border-glow:rgba(0,212,255,0.3);
+  --text-primary:#e0f4ff;
+  --text-muted:#5a7a99;
+}
+body{font-family:'Tajawal',sans-serif;background:var(--bg-dark);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+.app-root{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+
+/* BG */
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.04) 1px,transparent 1px);background-size:40px 40px;z-index:0;animation:gridPulse 8s ease-in-out infinite}
+@keyframes gridPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.bg-gradient{position:fixed;inset:0;background:radial-gradient(ellipse 60% 50% at 15% 20%,rgba(0,80,180,0.25) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 80%,rgba(168,85,247,0.2) 0%,transparent 60%),radial-gradient(ellipse 40% 40% at 50% 50%,rgba(0,10,30,0.9) 0%,transparent 100%);z-index:0}
+.particle{position:fixed;border-radius:50%;background:var(--neon-cyan);box-shadow:0 0 6px var(--neon-cyan);animation:floatUp linear infinite;z-index:0}
+@keyframes floatUp{0%{transform:translateY(100vh) scale(1);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(0.5);opacity:0}}
+
+/* CORNERS */
+.corner{position:fixed;width:60px;height:60px;z-index:1}
+.corner::before,.corner::after{content:'';position:absolute;background:var(--neon-cyan)}
+.corner::before{width:2px;height:100%}
+.corner::after{width:100%;height:2px}
+.corner-tl{top:16px;left:16px}
+.corner-tr{top:16px;right:16px;transform:scaleX(-1)}
+.corner-bl{bottom:16px;left:16px;transform:scaleY(-1)}
+.corner-br{bottom:16px;right:16px;transform:scale(-1)}
+
+/* CONTAINER */
+.main-container{position:relative;z-index:10;width:100%;max-width:680px;margin:0 auto;padding:24px 20px;display:flex;flex-direction:column;gap:24px}
+
+/* HEADER */
+.header{text-align:center;display:flex;flex-direction:column;align-items:center;gap:8px}
+.header-badge{display:inline-block;font-family:'Orbitron',monospace;font-size:10px;font-weight:700;letter-spacing:4px;color:var(--neon-cyan);border:1px solid rgba(0,212,255,0.4);padding:4px 14px;border-radius:2px;background:rgba(0,212,255,0.07);animation:badgePulse 3s ease-in-out infinite}
+@keyframes badgePulse{0%,100%{box-shadow:0 0 6px rgba(0,212,255,0.3)}50%{box-shadow:0 0 18px rgba(0,212,255,0.7)}}
+.header-title{font-family:'Orbitron',monospace;font-size:clamp(20px,4vw,28px);font-weight:900;display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
+.title-tom{color:var(--neon-cyan);text-shadow:0 0 20px rgba(0,212,255,0.8),0 0 40px rgba(0,212,255,0.4);letter-spacing:6px}
+.title-separator{color:var(--text-muted)}
+.title-pubg{color:#fff;letter-spacing:2px}
+.header-sub{font-size:13px;color:var(--text-muted);font-weight:300;letter-spacing:1px}
+.header-line{width:200px;height:1px;background:linear-gradient(90deg,transparent,var(--neon-cyan),transparent);margin-top:4px}
+
+/* SCREENS */
+.screen{display:none;flex-direction:column;gap:20px;animation:screenIn .4s cubic-bezier(0.16,1,0.3,1)}
+.screen.active{display:flex}
+@keyframes screenIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.section-title{font-family:'Orbitron',monospace;font-size:12px;font-weight:700;letter-spacing:3px;color:var(--text-muted);text-transform:uppercase;text-align:center}
+
+/* PRESET CARDS */
+.presets-grid{display:flex;flex-direction:column;gap:12px}
+.preset-card{position:relative;overflow:hidden;background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:20px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;text-align:right;transition:all .3s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(10px);width:100%}
+.preset-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--card-glow) 0%,transparent 60%);opacity:0;transition:opacity .3s ease}
+.preset-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--card-color),transparent);opacity:0;transition:opacity .3s ease}
+.preset-card:hover{border-color:var(--card-color);transform:translateX(-4px);box-shadow:0 0 20px var(--card-glow),inset 0 0 30px rgba(0,0,0,0.3)}
+.preset-card:hover::before{opacity:1}
+.preset-card:hover::after{opacity:1}
+.preset-card:active{transform:translateX(-2px) scale(0.99)}
+.preset-card:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.card-shine{position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.05) 0%,transparent 50%);pointer-events:none}
+.card-icon{font-size:32px;flex-shrink:0;filter:drop-shadow(0 0 8px var(--card-color))}
+.card-label{font-family:'Orbitron',monospace;font-size:18px;font-weight:700;color:#fff;flex:1;text-shadow:0 0 10px var(--card-color)}
+.card-sub{font-size:12px;color:var(--text-muted);font-weight:300;flex:1;font-family:'Tajawal',sans-serif}
+.card-arrow{font-size:20px;color:var(--card-color);opacity:.6;transition:all .3s ease;font-family:monospace}
+.preset-card:hover .card-arrow{opacity:1;transform:translateX(-6px)}
+
+/* QUEUE PANEL */
+.queue-panel{margin-bottom:20px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:8px;backdrop-filter:blur(10px);overflow:hidden}
+.queue-header{display:flex;align-items:center;gap:8px;padding:8px 14px;background:rgba(0,212,255,0.05);border-bottom:1px solid rgba(0,212,255,0.1);font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--text-muted)}
+.queue-dot{width:8px;height:8px;border-radius:50%;background:var(--neon-green);box-shadow:0 0 8px var(--neon-green);animation:logBlink 1.5s ease-in-out infinite;flex-shrink:0}
+@keyframes logBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.queue-body{padding:10px;max-height:200px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.queue-item{display:flex;align-items:center;gap:10px;padding:8px 10px;background:rgba(0,0,0,0.3);border-radius:6px;transition:all .3s ease}
+.queue-status-icon{width:18px;height:18px;flex-shrink:0}
+.queue-item-content{flex:1}
+.queue-item-title{font-size:13px;color:#fff;font-weight:600}
+.queue-item-status{font-size:11px}
+.queue-item.pending .queue-item-status{color:var(--text-muted)}
+.queue-item.running .queue-item-status{color:var(--neon-cyan)}
+.queue-item.success .queue-item-status{color:var(--neon-green)}
+.queue-item.error .queue-item-status{color:var(--neon-orange)}
+.queue-check{color:var(--neon-green);font-size:18px;font-weight:900;margin-right:auto}
+
+.spinner{width:18px;height:18px;border:2px solid var(--text-muted);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
+.spinner.cyan{border-color:var(--neon-cyan);border-top-color:transparent}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CUSTOM BUTTONS */
+.custom-divider{display:flex;align-items:center;gap:12px;margin:16px 0}
+.custom-divider hr{flex:1;border:none;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent)}
+.custom-divider span{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:2px;color:var(--text-muted)}
+.custom-btn{position:relative;overflow:hidden;background:var(--bg-card);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px 24px;cursor:pointer;display:flex;align-items:center;gap:18px;text-align:right;transition:all .3s cubic-bezier(0.16,1,0.3,1);backdrop-filter:blur(10px);width:100%}
+.custom-btn:hover{box-shadow:0 0 15px var(--btn-glow)}
+.custom-btn:disabled{opacity:0.5;cursor:not-allowed}
+.custom-btn-icon{width:24px;height:24px;flex-shrink:0}
+.custom-btn-label{font-family:'Orbitron',monospace;font-size:16px;font-weight:700;color:#fff;flex:1}
+.custom-btn-arrow{font-size:18px;opacity:.6;transition:all .3s ease}
+.custom-btn:hover .custom-btn-arrow{opacity:1}
+
+.btn-add{--btn-color:var(--neon-green);--btn-glow:rgba(0,255,136,0.3);border-color:rgba(0,255,136,0.2)}
+.btn-add:hover{border-color:var(--neon-green)}
+.btn-add .custom-btn-icon{color:var(--neon-green)}
+.btn-add .custom-btn-label{text-shadow:0 0 10px var(--neon-green)}
+.btn-add .custom-btn-arrow{color:var(--neon-green)}
+
+.btn-install{--btn-color:var(--neon-yellow);--btn-glow:rgba(255,204,0,0.3);border-color:rgba(255,204,0,0.2)}
+.btn-install:hover{border-color:var(--neon-yellow)}
+.btn-install .custom-btn-icon{color:var(--neon-yellow)}
+.btn-install .custom-btn-label{text-shadow:0 0 10px var(--neon-yellow)}
+.btn-install .custom-btn-arrow{color:var(--neon-yellow)}
+
+/* INFO BOX */
+.info-box{display:flex;align-items:flex-start;gap:10px;background:rgba(0,100,160,0.1);border:1px solid rgba(0,180,255,0.2);border-radius:6px;padding:12px 16px}
+.info-icon{font-size:16px;color:var(--neon-cyan);flex-shrink:0;margin-top:1px}
+.info-text{font-size:12px;color:var(--text-muted);line-height:1.7;font-weight:300}
+
+/* RESULT SCREEN */
+.screen-result{align-items:center;text-align:center;padding:30px 0}
+.result-icon{width:80px;height:80px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:36px;font-weight:900;animation:popIn .5s cubic-bezier(0.16,1,0.3,1)}
+@keyframes popIn{from{transform:scale(0.3);opacity:0}to{transform:scale(1);opacity:1}}
+.success-icon{background:rgba(0,255,136,0.1);border:2px solid var(--neon-green);color:var(--neon-green);box-shadow:0 0 30px rgba(0,255,136,0.4),inset 0 0 20px rgba(0,255,136,0.1)}
+.error-icon{background:rgba(255,107,53,0.1);border:2px solid var(--neon-orange);color:var(--neon-orange);box-shadow:0 0 30px rgba(255,107,53,0.4)}
+.result-title{font-family:'Orbitron',monospace;font-size:24px;font-weight:700;color:#fff}
+.result-sub{font-size:15px;color:var(--text-muted)}
+.result-sub strong{color:var(--neon-cyan);font-weight:600}
+.result-message{background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.2);border-radius:8px;padding:14px 24px;font-size:15px;color:var(--neon-green);display:flex;align-items:center;gap:10px;font-family:'Tajawal',sans-serif;font-weight:500}
+.error-message{background:rgba(255,107,53,0.06);border:1px solid rgba(255,107,53,0.2);border-radius:8px;padding:14px 24px;font-size:15px;color:var(--neon-orange);display:flex;align-items:center;gap:10px;font-family:'Tajawal',sans-serif;font-weight:500}
+.result-actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px}
+.action-btn{font-family:'Tajawal',sans-serif;font-size:14px;font-weight:600;padding:12px 28px;border-radius:6px;cursor:pointer;border:1px solid;transition:all .3s ease;display:flex;align-items:center;gap:8px}
+.action-primary{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.5);color:var(--neon-cyan)}
+.action-primary:hover{background:rgba(0,212,255,0.2);box-shadow:0 0 20px rgba(0,212,255,0.3)}
+.action-danger{background:rgba(255,107,53,0.1);border-color:rgba(255,107,53,0.5);color:var(--neon-orange)}
+.action-danger:hover{background:rgba(255,107,53,0.2);box-shadow:0 0 20px rgba(255,107,53,0.3)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:100;padding:20px;animation:fadeIn .3s ease}
+.modal-overlay.active{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{width:100%;max-width:440px;background:var(--bg-card);border:1px solid var(--modal-border,var(--border-glow));border-radius:12px;animation:modalIn .3s ease;overflow:hidden;backdrop-filter:blur(10px)}
+@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--modal-header-bg,rgba(0,212,255,0.08));border-bottom:1px solid var(--modal-border,var(--border-glow));font-family:'Orbitron',monospace;font-size:12px;letter-spacing:2px;color:#fff}
+.modal-header-left{display:flex;align-items:center;gap:10px}
+.modal-header-icon{width:20px;height:20px}
+.modal-close{color:var(--text-muted);cursor:pointer;transition:color .3s;background:none;border:none;padding:4px}
+.modal-close:hover{color:#fff}
+.modal-body{padding:16px;max-height:320px;overflow-y:auto}
+.modal-close-btn{color:var(--text-muted);cursor:pointer;transition:color .3s}
+.modal-close-btn:hover{color:#fff}
+
+.modal-add{--modal-border:rgba(0,255,136,0.3);--modal-header-bg:rgba(0,255,136,0.08)}
+.modal-install{--modal-border:rgba(255,204,0,0.3);--modal-header-bg:rgba(255,204,0,0.08)}
+
+.modal-label{font-family:'Orbitron',monospace;font-size:10px;letter-spacing:1px;color:var(--text-muted);margin-bottom:8px;display:block}
+
+/* FILE DROP - FIXED ALIGNMENT */
+.file-drop-wrapper{width:100%;margin:0 auto}
+.file-drop{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  width:100%;
+  max-width:100%;
+  border:2px dashed rgba(0,255,136,0.3);
+  border-radius:8px;
+  padding:32px 24px;
+  text-align:center;
+  cursor:pointer;
+  transition:all .3s ease;
+  background:transparent;
+}
+.file-drop:hover{border-color:var(--neon-green);background:rgba(0,255,136,0.05)}
+.file-drop.has-file{border-color:var(--neon-green);background:rgba(0,255,136,0.05)}
+.file-drop input{display:none}
+.file-drop-icon{width:36px;height:36px;color:var(--text-muted);flex-shrink:0}
+.file-drop.has-file .file-drop-icon{color:var(--neon-green)}
+.file-drop-text{font-size:14px;color:var(--text-muted);font-weight:500;word-break:break-word}
+.file-drop.has-file .file-drop-text{color:var(--neon-green);font-weight:600}
+
+.modal-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:12px 16px;color:#fff;font-size:14px;font-family:'Tajawal',sans-serif;transition:all .3s}
+.modal-input:focus{outline:none;border-color:var(--neon-cyan);box-shadow:0 0 0 2px rgba(0,212,255,0.2)}
+
+.modal-btn{width:100%;padding:14px;border-radius:8px;font-family:'Orbitron',monospace;font-size:13px;font-weight:700;cursor:pointer;border:1px solid;transition:all .3s;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px}
+.modal-btn-save{background:rgba(0,255,136,0.1);border-color:rgba(0,255,136,0.5);color:var(--neon-green)}
+.modal-btn-save:hover{background:rgba(0,255,136,0.2);box-shadow:0 0 20px rgba(0,255,136,0.3)}
+.modal-btn-save:disabled{opacity:0.5;cursor:not-allowed}
+
+.profile-item{display:flex;align-items:center;gap:12px;padding:12px;background:rgba(0,0,0,0.3);border:1px solid transparent;border-radius:8px;cursor:pointer;transition:all .3s}
+.profile-item:hover{background:rgba(0,212,255,0.1);border-color:var(--border-glow)}
+.profile-item-icon{width:20px;height:20px;color:var(--neon-cyan);flex-shrink:0}
+.profile-item-info{flex:1}
+.profile-item-name{font-weight:600;color:#fff}
+.profile-item-file{font-size:12px;color:var(--text-muted)}
+.profile-item-delete{opacity:0;color:#ff6b35;background:none;border:none;padding:4px;cursor:pointer;transition:all .3s;border-radius:4px}
+.profile-item:hover .profile-item-delete{opacity:1}
+.profile-item-delete:hover{background:rgba(255,107,53,0.2)}
+.profile-empty{text-align:center;padding:32px;color:var(--text-muted)}
+.profile-empty-icon{width:40px;height:40px;margin:0 auto 12px;opacity:.5}
+
+/* FOOTER */
+.footer{text-align:center;margin-top:auto;padding-top:20px}
+.footer-text{font-size:11px;color:rgba(255,255,255,0.15);font-family:'Orbitron',monospace;letter-spacing:2px}
+.footer-tom{color:rgba(0,212,255,0.4)}
+
+/* STATUS DOT */
+.status-bar{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:8px;font-size:12px;color:var(--text-muted)}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--neon-orange);box-shadow:0 0 8px var(--neon-orange);transition:all .3s}
+.status-dot.connected{background:var(--neon-green);box-shadow:0 0 8px var(--neon-green)}
+
+@media(max-width:480px){.main-container{padding:16px 12px}.preset-card{padding:16px 18px}.card-label{font-size:15px}.card-icon{font-size:26px}.corner{width:40px;height:40px}}
+</style>
+</head>
+<body>
+<div class="app-root" id="app">
+
+  <!-- BG -->
+  <div class="bg-grid"></div>
+  <div class="bg-gradient"></div>
+  <div id="particles-container"></div>
+
+  <!-- Corners -->
+  <div class="corner corner-tl"></div>
+  <div class="corner corner-tr"></div>
+  <div class="corner corner-bl"></div>
+  <div class="corner corner-br"></div>
+
+  <div class="main-container">
+
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header-badge">GAMELOOP 4.4</div>
+      <h1 class="header-title">
+        <span class="title-tom">T O M</span>
+        <span class="title-separator">|</span>
+        <span class="title-pubg">PUBG FPS Settings</span>
+      </h1>
+      <p class="header-sub">FPS Settings Tool for PUBG Mobile</p>
+      <div class="header-line"></div>
+    </header>
+
+    <!-- STATUS BAR -->
+    <div class="status-bar" id="status-bar">
+      <span class="status-dot" id="status-dot"></span>
+      <span id="status-text">Checking...</span>
+    </div>
+
+    <!-- QUEUE PANEL -->
+    <div class="queue-panel" id="queue-panel" style="display:none">
+      <div class="queue-header"><span class="queue-dot"></span>EXECUTION QUEUE</div>
+      <div class="queue-body" id="queue-body"></div>
+    </div>
+
+    <!-- MENU SCREEN -->
+    <div class="screen active" id="screen-menu">
+      <div class="section-title">Select FPS Setting</div>
+      <div class="presets-grid">
+        <button class="preset-card" style="--card-color:#a855f7;--card-glow:rgba(168,85,247,0.4)" id="btn-hd">
+          <div class="card-shine"></div>
+          <div class="card-icon">🎮</div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end">
+            <div class="card-label">HD</div>
+            <div class="card-sub">Fast Performance</div>
+          </div>
+          <div class="card-arrow">←</div>
+        </button>
+        <button class="preset-card" style="--card-color:#00d4ff;--card-glow:rgba(0,212,255,0.4)" id="btn-hdr">
+          <div class="card-shine"></div>
+          <div class="card-icon">⚡</div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end">
+            <div class="card-label">HDR</div>
+            <div class="card-sub">High Quality</div>
+          </div>
+          <div class="card-arrow">←</div>
+        </button>
+        <button class="preset-card" style="--card-color:#ff6b35;--card-glow:rgba(255,107,53,0.4)" id="btn-ultra">
+          <div class="card-shine"></div>
+          <div class="card-icon">🔥</div>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end">
+            <div class="card-label">Ultra HDR</div>
+            <div class="card-sub">Maximum Quality</div>
+          </div>
+          <div class="card-arrow">←</div>
+        </button>
+      </div>
+
+      <div class="custom-divider">
+        <hr>
+        <span>CUSTOM</span>
+        <hr>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <button class="preset-card custom-btn btn-add" id="btn-add-file">
+          <div class="card-shine"></div>
+          <svg class="custom-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end">
+            <div class="card-label">Add Your File</div>
+            <div class="card-sub">Save custom profile</div>
+          </div>
+          <div class="card-arrow">+</div>
+        </button>
+
+        <button class="preset-card custom-btn btn-install" id="btn-install-file">
+          <div class="card-shine"></div>
+          <svg class="custom-btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <div style="flex:1;display:flex;flex-direction:column;align-items:flex-end">
+            <div class="card-label">Install Your File</div>
+            <div class="card-sub">Apply saved profile</div>
+          </div>
+          <div class="card-arrow">→</div>
+        </button>
+      </div>
+
+      <div class="info-box">
+        <div class="info-icon">ℹ</div>
+        <div class="info-text">Make sure Gameloop is running and ADB Debugging is enabled before selecting any option</div>
+      </div>
+    </div>
+
+    <!-- SUCCESS SCREEN -->
+    <div class="screen screen-result" id="screen-success">
+      <div class="result-icon success-icon">✓</div>
+      <div class="result-title">Success!</div>
+      <div class="result-sub">Configuration <strong id="success-preset">—</strong> applied successfully</div>
+      <div class="result-message"><span>🎮</span> PUBG is launching now...</div>
+      <div class="result-actions">
+        <button class="action-btn action-primary" id="btn-back-success">← Return to Menu</button>
+      </div>
+    </div>
+
+    <!-- ERROR SCREEN -->
+    <div class="screen screen-result" id="screen-error">
+      <div class="result-icon error-icon">✕</div>
+      <div class="result-title">Error!</div>
+      <div class="result-sub">Please restart Gameloop and try again</div>
+      <div class="error-message" id="error-message">Device not connected</div>
+      <div class="result-actions">
+        <button class="action-btn action-danger" id="btn-back-error">← Return to Menu</button>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <div class="footer-text">Made by <span class="footer-tom">T O M</span> • PUBG FPS Tool</div>
+    </footer>
+  </div>
+
+  <!-- ADD FILE MODAL -->
+  <div class="modal-overlay" id="modal-add">
+    <div class="modal modal-add">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <svg class="modal-header-icon" viewBox="0 0 24 24" fill="none" stroke="var(--neon-green)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          ADD YOUR FILE
+        </div>
+        <span class="modal-close-btn" id="modal-add-close">✕</span>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom:16px">
+          <div class="modal-label">SELECT FILE (e.g., Active.save)</div>
+          <div class="file-drop-wrapper">
+            <label class="file-drop" id="file-drop">
+              <input type="file" id="file-input">
+              <svg class="file-drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+              <div class="file-drop-text" id="file-drop-text">Click to select a file</div>
+            </label>
+          </div>
+        </div>
+        <div>
+          <div class="modal-label">PROFILE NAME</div>
+          <input type="text" class="modal-input" id="profile-name-input" placeholder="Enter profile name...">
+        </div>
+        <button class="modal-btn modal-btn-save" id="btn-save-profile">
+          <span style="font-size:16px">✓</span> SAVE PROFILE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- INSTALL MODAL -->
+  <div class="modal-overlay" id="modal-install">
+    <div class="modal modal-install">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <svg class="modal-header-icon" viewBox="0 0 24 24" fill="none" stroke="var(--neon-yellow)" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          SELECT PROFILE
+        </div>
+        <span class="modal-close-btn" id="modal-install-close">✕</span>
+      </div>
+      <div class="modal-body" id="profiles-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── API HELPERS ──
+function apiCall(methodName, ...args) {
+  if (typeof window === 'undefined' || !window.pywebview || !window.pywebview.api) {
+    return Promise.reject(new Error('Backend not connected'));
+  }
+  return window.pywebview.api[methodName](...args);
+}
+
+// ── STATE ──
+let isProcessing = false;
+let queue = [];
+let selectedFile = null;
+
+// ── PARTICLES ──
+(function(){
+  const c = document.getElementById('particles-container');
+  for(let i=0;i<30;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 2 + Math.random()*3;
+    const dur = 15 + Math.random()*15;
+    const delay = Math.random()*20;
+    p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;animation-duration:${dur}s;animation-delay:-${delay}s`;
+    c.appendChild(p);
+  }
+})();
+
+// ── UI HELPERS ──
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+function showModal(id, show=true) {
+  const el = document.getElementById(id);
+  if (show) el.classList.add('active');
+  else el.classList.remove('active');
+}
+
+function setProcessing(val) {
+  isProcessing = val;
+  document.querySelectorAll('.preset-card, .custom-btn').forEach(btn => {
+    btn.disabled = !!val;
+  });
+}
+
+function setStatus(connected, message) {
+  const dot = document.getElementById('status-dot');
+  const text = document.getElementById('status-text');
+  if (connected) {
+    dot.classList.add('connected');
+  } else {
+    dot.classList.remove('connected');
+  }
+  text.textContent = message || (connected ? 'Device connected' : 'Device not connected');
+}
+
+// ── QUEUE ──
+function renderQueue() {
+  const panel = document.getElementById('queue-panel');
+  const body = document.getElementById('queue-body');
+
+  if (queue.length === 0) {
+    panel.style.display = 'none';
+    return;
+  }
+
+  panel.style.display = 'block';
+  body.innerHTML = queue.map(item => `
+    <div class="queue-item ${item.status}">
+      ${item.status === 'running' ? '<div class="spinner cyan"></div>' : ''}
+      ${item.status === 'pending' ? '<div class="spinner"></div>' : ''}
+      ${item.status === 'success' ? '<span style="color:var(--neon-green)">✓</span>' : ''}
+      ${item.status === 'error' ? '<span style="color:var(--neon-orange)">✕</span>' : ''}
+      <div class="queue-item-content">
+        <div class="queue-item-title">${item.title}</div>
+        <div class="queue-item-status">${item.status === 'running' ? 'Processing...' : item.status === 'pending' ? 'Waiting...' : item.status === 'success' ? 'Completed' : 'Failed'}</div>
+      </div>
+      ${item.status === 'success' ? '<span class="queue-check">✔</span>' : ''}
+    </div>
+  `).join('');
+}
+
+function addToQueue(action, title) {
+  const id = action + '-' + Date.now();
+  queue.push({ id, action, title, status: 'pending' });
+  renderQueue();
+  return id;
+}
+
+function updateQueue(id, status) {
+  const item = queue.find(q => q.id === id);
+  if (item) {
+    item.status = status;
+    renderQueue();
+  }
+}
+
+function removeFromQueue(id) {
+  queue = queue.filter(q => q.id !== id);
+  setTimeout(renderQueue, 500);
+}
+
+// ── STATUS CHECK ──
+async function checkStatus() {
+  try {
+    const result = await apiCall('check_status');
+    if (result && result.device_connected) {
+      setStatus(true, result.message);
+    } else {
+      setStatus(false, result && result.message ? result.message : 'Device not connected');
+    }
+  } catch (e) {
+    setStatus(false, 'Backend not ready');
+  }
+}
+
+// ── PRESET EXECUTION ──
+async function executePreset(presetName) {
+  if (isProcessing) return;
+  setProcessing(true);
+
+  const queueId = addToQueue('preset', presetName);
+  updateQueue(queueId, 'running');
+
+  try {
+    const result = await apiCall('execute_preset', presetName);
+    if (result && result.success) {
+      updateQueue(queueId, 'success');
+      document.getElementById('success-preset').textContent = presetName;
+      showScreen('success');
+      setTimeout(() => removeFromQueue(queueId), 1500);
+    } else {
+      updateQueue(queueId, 'error');
+      const msgEl = document.getElementById('error-message');
+      msgEl.textContent = (result && result.message) ? result.message : 'Execution failed';
+      showScreen('error');
+    }
+  } catch (err) {
+    updateQueue(queueId, 'error');
+    const msgEl = document.getElementById('error-message');
+    msgEl.textContent = err && err.message ? err.message : 'Execution failed';
+    showScreen('error');
+  }
+
+  setProcessing(false);
+  checkStatus();
+}
+
+// ── CUSTOM INSTALL ──
+async function executeCustom(profileName, base64Content) {
+  if (isProcessing) return;
+  setProcessing(true);
+
+  const queueId = addToQueue('install', profileName);
+  updateQueue(queueId, 'running');
+
+  try {
+    const result = await apiCall('execute_custom', profileName, base64Content);
+    if (result && result.success) {
+      updateQueue(queueId, 'success');
+      document.getElementById('success-preset').textContent = profileName;
+      showScreen('success');
+      setTimeout(() => removeFromQueue(queueId), 1500);
+    } else {
+      updateQueue(queueId, 'error');
+      const msgEl = document.getElementById('error-message');
+      msgEl.textContent = (result && result.message) ? result.message : 'Execution failed';
+      showScreen('error');
+    }
+  } catch (err) {
+    updateQueue(queueId, 'error');
+    const msgEl = document.getElementById('error-message');
+    msgEl.textContent = err && err.message ? err.message : 'Execution failed';
+    showScreen('error');
+  }
+
+  setProcessing(false);
+  checkStatus();
+}
+
+async function executeSavedProfile(profileName, savedPath) {
+  if (isProcessing) return;
+  setProcessing(true);
+
+  const queueId = addToQueue('install', profileName);
+  updateQueue(queueId, 'running');
+
+  try {
+    const result = await apiCall('execute_saved_profile', profileName, savedPath);
+    if (result && result.success) {
+      updateQueue(queueId, 'success');
+      document.getElementById('success-preset').textContent = profileName;
+      showScreen('success');
+      setTimeout(() => removeFromQueue(queueId), 1500);
+    } else {
+      updateQueue(queueId, 'error');
+      const msgEl = document.getElementById('error-message');
+      msgEl.textContent = (result && result.message) ? result.message : 'Execution failed';
+      showScreen('error');
+    }
+  } catch (err) {
+    updateQueue(queueId, 'error');
+    const msgEl = document.getElementById('error-message');
+    msgEl.textContent = err && err.message ? err.message : 'Execution failed';
+    showScreen('error');
+  }
+
+  setProcessing(false);
+  checkStatus();
+}
+
+// ── PROFILES ──
+async function loadProfiles() {
+  try {
+    const profiles = await apiCall('get_profiles');
+    return profiles || [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function renderProfiles(profiles) {
+  const list = document.getElementById('profiles-list');
+
+  if (!profiles || profiles.length === 0) {
+    list.innerHTML = `
+      <div class="profile-empty">
+        <svg class="profile-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+        <div>No profiles saved yet</div>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = profiles.map((p, i) => `
+    <div class="profile-item" data-idx="${i}">
+      <svg class="profile-item-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      <div class="profile-item-info">
+        <div class="profile-item-name">${p.name}</div>
+        <div class="profile-item-file">${p.file_name || p.fileName || 'Active.sav'}</div>
+      </div>
+      <button class="profile-item-delete" data-idx="${i}" title="Delete">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  `).join('');
+
+  list.querySelectorAll('.profile-item').forEach(el => {
+    el.addEventListener('click', (e) => {
+      if (e.target.closest('.profile-item-delete')) return;
+      const idx = parseInt(el.dataset.idx);
+      const profile = profiles[idx];
+      if (profile) {
+        showModal('modal-install', false);
+        // Use execute_saved_profile for saved disk profiles
+        executeSavedProfile(profile.name, profile.saved_path || '');
+      }
+    });
+  });
+
+  list.querySelectorAll('.profile-item-delete').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      const idx = parseInt(btn.dataset.idx);
+      if (confirm('Delete this profile?')) {
+        try {
+          await apiCall('delete_profile', idx);
+          const profiles = await loadProfiles();
+          renderProfiles(profiles);
+        } catch (err) {
+          alert('Failed to delete profile');
+        }
+      }
+    });
+  });
+}
+
+// ── SAVE PROFILE ──
+async function saveProfile() {
+  if (!selectedFile || !document.getElementById('profile-name-input').value.trim()) return;
+  if (isProcessing) return;
+
+  const name = document.getElementById('profile-name-input').value.trim();
+  setProcessing(true);
+
+  const queueId = addToQueue('add', name);
+  updateQueue(queueId, 'running');
+
+  try {
+    const reader = new FileReader();
+    const base64Promise = new Promise((resolve, reject) => {
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+    });
+    reader.readAsDataURL(selectedFile);
+    const base64 = await base64Promise;
+
+    const result = await apiCall('save_profile', name, selectedFile.name, base64);
+    if (result && result.success) {
+      updateQueue(queueId, 'success');
+      showModal('modal-add', false);
+      setTimeout(() => removeFromQueue(queueId), 1500);
+    } else {
+      updateQueue(queueId, 'error');
+      alert((result && result.message) ? result.message : 'Failed to save profile');
+    }
+  } catch (err) {
+    updateQueue(queueId, 'error');
+    alert(err && err.message ? err.message : 'Failed to save profile');
+  }
+
+  setProcessing(false);
+}
+
+// ── EVENT HANDLERS ──
+document.getElementById('btn-hd').addEventListener('click', () => executePreset('HD'));
+document.getElementById('btn-hdr').addEventListener('click', () => executePreset('HDR'));
+document.getElementById('btn-ultra').addEventListener('click', () => executePreset('Ultra HDR'));
+
+document.getElementById('btn-add-file').addEventListener('click', () => {
+  selectedFile = null;
+  document.getElementById('file-drop-text').textContent = 'Click to select a file';
+  document.getElementById('file-drop').classList.remove('has-file');
+  document.getElementById('profile-name-input').value = '';
+  showModal('modal-add');
+});
+
+document.getElementById('btn-install-file').addEventListener('click', async () => {
+  const profiles = await loadProfiles();
+  renderProfiles(profiles);
+  showModal('modal-install');
+});
+
+document.getElementById('modal-add-close').addEventListener('click', () => showModal('modal-add', false));
+document.getElementById('modal-install-close').addEventListener('click', () => showModal('modal-install', false));
+
+document.getElementById('btn-back-success').addEventListener('click', () => showScreen('menu'));
+document.getElementById('btn-back-error').addEventListener('click', () => showScreen('menu'));
+
+// File input
+document.getElementById('file-input').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    selectedFile = file;
+    document.getElementById('file-drop-text').textContent = file.name;
+    document.getElementById('file-drop').classList.add('has-file');
+    document.getElementById('profile-name-input').value = file.name.replace(/\.[^/.]+$/, '');
+  }
+});
+
+// Save profile button
+document.getElementById('btn-save-profile').addEventListener('click', saveProfile);
+
+// Drag and drop on file-drop
+document.getElementById('file-drop').addEventListener('dragover', (e) => {
+  e.preventDefault();
+  e.currentTarget.classList.add('has-file');
+});
+document.getElementById('file-drop').addEventListener('dragleave', (e) => {
+  e.currentTarget.classList.remove('has-file');
+});
+document.getElementById('file-drop').addEventListener('drop', (e) => {
+  e.preventDefault();
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    selectedFile = files[0];
+    document.getElementById('file-drop-text').textContent = files[0].name;
+    document.getElementById('file-drop').classList.add('has-file');
+    document.getElementById('profile-name-input').value = files[0].name.replace(/\.[^/.]+$/, '');
+  }
+});
+
+// Close modal on overlay click
+document.getElementById('modal-add').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) showModal('modal-add', false);
+});
+document.getElementById('modal-install').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) showModal('modal-install', false);
+});
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  checkStatus();
+  setInterval(checkStatus, 5000);
+});
+</script>
+</body>
+</html>
